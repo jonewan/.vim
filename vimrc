@@ -4,6 +4,12 @@
 call plug#begin('~/.vim/plugged')
 " YoucompleteMe
 Plug 'ycm-core/YouCompleteMe'
+" YCM config file auto generate
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+" YCM simple config
+"Plug 'tdcdev/ycm_simple_conf'
+" tagbar
+Plug 'majutsushi/tagbar'
 " Error checking
 Plug 'dense-analysis/ale'
 " File tree use <c-n> to open 
@@ -25,33 +31,49 @@ call plug#end()
 " ===
 " === You Complete ME
 " ===
+" YCM 补全菜单配色
+" 菜单
+highlight Pmenu ctermfg=2 ctermbg=3 guifg=#005f87 guibg=#EEE8D5
+" 选中项
+highlight PmenuSel ctermfg=2 ctermbg=3 guifg=#AFD700 guibg=#106900
+
 " use ide style
 " set completeopt=longest,menu
+let g:ycm_goto_buffer_command = 'horizontal-split'
+let g:ycm_register_as_syntastic_checker = 0
 nnoremap gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap g/ :YcmCompleter GetDoc<CR>
 nnoremap gt :YcmCompleter GetType<CR>
 nnoremap gr :YcmCompleter GoToReferences<CR>
-autocmd FileType c,cpp,python let g:ycm_collect_identifiers_from_tags_files =1
-autocmd FileType c,cpp,python let g:ycm_complete_in_comments = 0
-autocmd FileType c,cpp,python let g:ycm_complete_in_strings = 0
-autocmd FileType c,cpp,python let g:syntastic_enable_signs=1
-autocmd FileType c,cpp,python let g:syntastic_error_symbol = '✗'
-autocmd FileType c,cpp,python let g:syntastic_warning_symbol = '⚠'
-autocmd FileType c,cpp,python let g:ycm_confirm_extra_conf = 0
-
-" 在注释中也可以补全
-let g:ycm_complete_in_comments=1
-" 输入第一个字符就开始补全
-let g:ycm_min_num_of_chars_for_completion=1
 " 寻找全局配置文件
 let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
 let g:ycm_python_interpreter_path = "/usr/bin/python3"
 let g:ycm_python_binary_path = "/usr/bin/python3"
+
+let g:ycm_collect_identifiers_from_tags_files =1
+" 在注释中也可以补全
+" autocmd FileType c,cpp,python 
+let g:ycm_complete_in_comments = 0
+let g:ycm_complete_in_strings = 0
+let g:syntastic_enable_signs=1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
 " 不显示开启vim时检查ycm_extra_conf文件的信息
-let g:ycm_confirm_extra_conf=0
+let g:ycm_confirm_extra_conf = 0
+" 输入第一个字符就开始补全
+let g:ycm_min_num_of_chars_for_completion=1
+"语法关键字补全
+let g:ycm_seed_identifiers_with_syntax=1 
 " 每次重新生成匹配项，禁止缓存匹配项
 let g:ycm_cache_omnifunc=0
-let g:ycm_use_clangd = 0
+let g:ycm_use_clangd = 1
+" 取消ycm诊断信息
+"let g:ycm_show_diagnostics_ui = 0
+
+" ===
+" === tagbar
+" ===
+nmap <F3> :TagbarToggle<CR>
 
 " ===
 " === ale
@@ -64,7 +86,7 @@ let g:ale_sign_warning = '--'
 " ===
 " === nerdtree
 " ===
-map <c-n> :NERDTreeToggle<CR>
+map <F2> :NERDTreeToggle<CR>
 let g:NERDTreeDirArrowExpandable = '▸' 
 let g:NERDTreeDirArrowCollapsible = '▾'
 
@@ -130,6 +152,9 @@ set wildmenu
 
 " 显示行号
 set number
+" 行号显示快捷键
+map snu :set number<CR>
+map snnu :set nonumber<CR>
 
 " 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 set nocompatible
@@ -218,7 +243,7 @@ filetype plugin indent on
 
 set autochdir
 
-" 使用粘贴模式
+" 粘贴模式快捷键
 map sp :set paste<CR>
 map snp :set nopaste<CR>
 
