@@ -76,12 +76,40 @@ let g:ycm_use_clangd = 1
 nmap <F3> :TagbarToggle<CR>
 
 " ===
-" === ale
+" === ale config
 " ===
-let b:ale_linters = ['pylint']
-let b:ale_fixers = ['autopep8', 'yapf']
-let g:ale_sign_error = '>>'
-let g:ale_sign_warning = '--'
+let g:ale_lint_on_text_changed       = 'normal'                     " 代码更改后启动检查 
+let g:ale_lint_on_insert_leave       = 1                            " 退出插入模式即检查
+let g:ale_sign_column_always         = 1                            " 总是显示动态检查结果
+let g:ale_sign_error                 = '>>'                         " error 告警符号
+let g:ale_sign_warning               = '--'                         " warning 告警符号
+let g:ale_echo_msg_error_str         = 'E'                          " 错误显示字符
+let g:ale_echo_msg_warning_str       = 'W'                          " 警告显示字符
+let g:ale_echo_msg_format            = '[%linter%] %s [%severity%]' " 告警显示格式
+ 
+" C 语言配置检查参数
+let g:ale_c_gcc_options              = '-Wall -Werror -O2 -std=c11'
+let g:ale_c_clang_options            = '-Wall -Werror -O2 -std=c11'
+let g:ale_c_cppcheck_options         = ''
+" C++ 配置检查参数
+let g:ale_cpp_gcc_options            = '-Wall -Werror -O2 -std=c++14'
+let g:ale_cpp_clang_options          = '-Wall -Werror -O2 -std=c++14'
+let g:ale_cpp_cppcheck_options       = ''
+ 
+"使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
+let g:ale_linters = {
+\   'c++': ['clang', 'gcc'],
+\   'c': ['clang', 'gcc'],
+\   'python': ['pylint'],
+\}
+" <F9> 触发/关闭代码动态检查
+map <F9> :ALEToggle<CR>
+
+"普通模式下，ak 前往上一个错误或警告，aj 前往下一个错误或警告
+nmap ak <Plug>(ale_previous_wrap)
+nmap aj <Plug>(ale_next_wrap)
+" ad 查看错误或警告的详细信息
+nmap ad :ALEDetail<CR>
 
 " ===
 " === nerdtree
