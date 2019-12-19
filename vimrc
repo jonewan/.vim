@@ -1,5 +1,13 @@
+" 编码设置
+set enc=utf-8
+set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
+
+" 语言设置
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+
 " ===
-" 插件安装
+" VIM Plug-in Installation
 " ===
 call plug#begin('~/.vim/plugged')
 " YoucompleteMe
@@ -9,6 +17,7 @@ Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
 " YCM simple config
 "Plug 'tdcdev/ycm_simple_conf'
 " tagbar
+" 需安装ctags `sudo apt install ctags`
 Plug 'majutsushi/tagbar'
 " Error checking
 Plug 'dense-analysis/ale'
@@ -24,12 +33,15 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'honza/vim-snippets'
 " ultisnips
 Plug 'SirVer/ultisnips'
+" airline
+Plug 'vim-airline/vim-airline'
+
 call plug#end()
 "-------------------------------
 
 " 插件配置
 " ===
-" === You Complete ME
+" === You Complete ME config
 " ===
 " YCM 补全菜单配色
 " 菜单
@@ -71,20 +83,25 @@ let g:ycm_use_clangd = 1
 "let g:ycm_show_diagnostics_ui = 0
 
 " ===
-" === tagbar
+" === tagbar config
 " ===
 nmap <F3> :TagbarToggle<CR>
+let g:tagbar_ctags_bin = 'ctags' " tagbar 依赖 ctags 插件
+let g:tagbar_width     = 30      " 设置 tagbar 的宽度为 30 列，默认 40 列
+let g:tagbar_autofocus = 1       " 打开 tagbar 时光标在 tagbar 页面内，默认在 vim 打开的文件内
+" let g:tagbar_left      = 1       " 让 tagbar 在页面左侧显示，默认右边
+let g:tagbar_sort      = 0       " 标签不排序，默认排序
 
 " ===
 " === ale config
 " ===
-let g:ale_lint_on_text_changed       = 'normal'                     " 代码更改后启动检查 
-let g:ale_lint_on_insert_leave       = 1                            " 退出插入模式即检查
-let g:ale_sign_column_always         = 1                            " 总是显示动态检查结果
-let g:ale_sign_error                 = '>>'                         " error 告警符号
-let g:ale_sign_warning               = '--'                         " warning 告警符号
-let g:ale_echo_msg_error_str         = 'E'                          " 错误显示字符
-let g:ale_echo_msg_warning_str       = 'W'                          " 警告显示字符
+let g:ale_lint_on_text_changed       = 'normal' " 代码更改后启动检查 
+let g:ale_lint_on_insert_leave       = 1        " 退出插入模式即检查
+let g:ale_sign_column_always         = 1        " 总是显示动态检查结果
+let g:ale_sign_error                 = '>>'     " error 告警符号
+let g:ale_sign_warning               = '--'     " warning 告警符号
+let g:ale_echo_msg_error_str         = 'E'      " 错误显示字符
+let g:ale_echo_msg_warning_str       = 'W'      " 警告显示字符
 let g:ale_echo_msg_format            = '[%linter%] %s [%severity%]' " 告警显示格式
  
 " C 语言配置检查参数
@@ -112,31 +129,102 @@ nmap aj <Plug>(ale_next_wrap)
 nmap ad :ALEDetail<CR>
 
 " ===
-" === nerdtree
+" === nerdtree config
 " ===
+" 映射F2键开启nerdtree
 map <F2> :NERDTreeToggle<CR>
 let g:NERDTreeDirArrowExpandable = '▸' 
 let g:NERDTreeDirArrowCollapsible = '▾'
+let NERDTreeHighlightCursorline = 1       " 高亮当前行
+let NERDTreeShowLineNumbers     = 1       " 显示行号
+" 忽略列表中的文件
+" let NERDTreeIgnore = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.egg$', '^\.git$', '^\.repo$', '^\.svn$', '^\.hg$' ]
+" 启动 vim 时打开 NERDTree
+" autocmd vimenter * NERDTree
+" 当打开 VIM，没有指定文件时和打开一个目录时，打开 NERDTree
+autocmd StdinReadPre * let s:std_in = 1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+" 关闭 NERDTree，当没有文件打开的时候
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
 
 " ===
-" === nerdcommenter
+" === nerdcommenter config
 " ===
 " Use <leader>cc to comment
 " Use <leader>cu to uncomment
 " Use <leader>ca to switch alternative comment style
 " Most usage can find at Readme.md of nerdcommenter.
+let g:NERDSpaceDelims            = 1 " 在注释符号后加一个空格
+let g:NERDCompactSexyComs        = 1 " 紧凑排布多行注释
+let g:NERDDefaultAlign           = 'left' " 逐行注释左对齐
+let g:NERDAltDelims_java         = 1 " JAVA 语言使用默认的注释符号
+" C 语言注释符号
+let g:NERDCustomDelimiters       = {'c': {'left': '/*', 'right': '*/'}}
+let g:NERDCommentEmptyLines      = 1 " 允许空行注释
+let g:NERDTrimTrailingWhitespace = 1 " 取消注释时删除行尾空格
+let g:NERDToggleCheckAllLines    = 1 " 检查选中的行操作是否成功
 
 " ===
-" === ultisnips
+" === ultisnips config
 " ===
 " 插入模式下直接通过<C-v>键来触发UltiSnips的代码块补全 
 let g:UltiSnipsExpandTrigger="<C-v>"
 " <C-z>弹出UltiSnips的可用列表
 let g:UltiSnipsListSnippets="<C-z>"
-"<C-f>跳转的到下一个代码块可编辑区 
+"<C-j>跳转的到下一个代码块可编辑区 
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
-"<C-b>跳转到上一个代码块可编辑区 
+"<C-k>跳转到上一个代码块可编辑区 
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
+
+" ===
+" === airline config
+" ===
+" 设置中文提示
+language messages zh_CN.utf-8 
+" 设置中文帮助
+set helplang=cn
+" 解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+" 设置为双字宽显示，否则无法完整显示如:☆
+set ambiwidth=double
+" 总是显示状态栏 
+let laststatus = 2
+
+let g:airline_powerline_fonts                   = 1 " 使用 powerline打过补丁的字体
+let g:airline_theme="dark"      " 设置主题
+" 开启tabline
+" 开启tabline
+let g:airline#extensions#tabline#enabled = 1
+" tabline中当前buffer两端的分隔字符
+let g:airline#extensions#tabline#left_sep = ' '
+" tabline中未激活buffer两端的分隔字符
+let g:airline#extensions#tabline#left_alt_sep = ' '
+" tabline中buffer显示编号
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" 状态栏显示图标设置
+if !exists('g:airline_symbols')
+	    let g:airline_symbols = {}
+endif
+
+" 切换 buffer
+nnoremap [b :bp<CR>
+nnoremap ]b :bn<CR>
+ 
+" 关闭当前 buffer
+noremap <C-x> :w<CR>:bd<CR>
+" <leader>1~9 切到 buffer1~9
+map <leader>1 :b 1<CR>
+map <leader>2 :b 2<CR>
+map <leader>3 :b 3<CR>
+map <leader>4 :b 4<CR>
+map <leader>5 :b 5<CR>
+map <leader>6 :b 6<CR>
+map <leader>7 :b 7<CR>
+map <leader>8 :b 8<CR>
+map <leader>9 :b 9<CR>
 
 "-------------------------------
 " 选择配色方案
@@ -156,6 +244,7 @@ exec "nohlsearch"
 set incsearch
 noremap = nzz
 noremap - Nzz
+
 " Use <space><CR> to cancle hlsearch 
 noremap <space><CR> :nohlsearch<CR>
 
@@ -167,19 +256,12 @@ set selectmode=mouse,key
 " 历史记录数
 set history=1000
 
-" 编码设置
-set enc=utf-8
-set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
-
-" 语言设置
-set langmenu=zh_CN.UTF-8
-set helplang=cn
-
 " 增强模式中的命令行自动完成操作
 set wildmenu
 
 " 显示行号
 set number
+
 " 行号显示快捷键
 map snu :set number<CR>
 map snnu :set nonumber<CR>
@@ -196,7 +278,7 @@ set ruler
 " 显示底部8行
 set scrolloff=8
 
-" 左右上下分屏快捷键
+" vim内左右上下分屏快捷键
 map sk :set nosplitbelow<CR>:split<CR>
 map sj :set splitbelow<CR>:split<CR>
 map sl :set splitright<CR>:vsplit<CR>
@@ -227,9 +309,11 @@ set laststatus=2
 
 " Tab键的宽度
 set tabstop=2
+
 " 统一缩进为2
 set softtabstop=2
 set shiftwidth=2
+
 " 不要用空格代替制表符
 set noexpandtab
 
@@ -251,15 +335,19 @@ syntax on
 " SHIFT+s 保存
 map S :w<CR>
 map s <nop>
+
 " SHIFT+q 退出
 map Q :q<CR>
+
 " 设置光标横线
 set cursorline
+
 " 自动换行
 set wrap
 
 " 保持所有终端配色一致
 let &t_ut=''
+
 " 让vim支持多文件格式
 filetype on
 filetype indent on
@@ -274,11 +362,6 @@ set autochdir
 " 粘贴模式快捷键
 map sp :set paste<CR>
 map snp :set nopaste<CR>
-
-" Reload the vimrc automaticly
-autocmd BufWritePost $MYVIMRC source $MYVIMRC 
-" Check the syntax style automaticly
-"autocmd BufWritePost ~/.Xdefaults call system('xrdb ~/.Xdefaults'
 
 " Move current line quickly
 " Use '2[m' to move curret line up 2 offset
@@ -295,3 +378,37 @@ nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 "在打开多文件下，退出当前文件，光标保持在上次编辑的位置
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+" ===
+" === Set new file title config
+" ===
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func! SetTitle() 
+	"如果文件类型为.sh文件 
+	if &filetype == 'sh' 
+		call setline(1, "##########################################################################") 
+		call append(line("."), "# File Name: ".expand("%")) 
+		call append(line(".")+1, "# Author: Jonewan") 
+		call append(line(".")+2, "# mail: jonewan@yeah.net") 
+		call append(line(".")+3, "# Created Time: ".strftime("%c")) 
+		call append(line(".")+4, "#########################################################################") 
+		call append(line(".")+5, "#!/bin/bash")
+		call append(line(".")+6, "")
+	else 
+		call setline(1, "/*************************************************************************") 
+		call append(line("."), "	> File Name: ".expand("%")) 
+		call append(line(".")+1, "	> Author: Jonewan") 
+		call append(line(".")+2, "	> Mail: jonewan@yeah.net ") 
+		call append(line(".")+3, "	> Created Time: ".strftime("%c")) 
+		call append(line(".")+4, " ************************************************************************/") 
+		call append(line(".")+5, "")
+	endif
+	"新建文件后，自动定位到文件末尾
+	autocmd BufNewFile * normal G
+endfunc 
+
+" Reload the vimrc automaticly
+autocmd BufWritePost $MYVIMRC source $MYVIMRC 
+" Check the syntax style automaticly
+"autocmd BufWritePost ~/.Xdefaults call system('xrdb ~/.Xdefaults'
