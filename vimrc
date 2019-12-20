@@ -1,3 +1,6 @@
+" ===
+" VIM global language config
+" ===
 " 编码设置
 set enc=utf-8
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
@@ -21,7 +24,7 @@ Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
 Plug 'majutsushi/tagbar'
 " Error checking
 Plug 'dense-analysis/ale'
-" File tree use <c-n> to open 
+" File tree
 Plug 'scrooloose/nerdtree'
 " Commenter
 Plug 'scrooloose/nerdcommenter'
@@ -33,8 +36,14 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'honza/vim-snippets'
 " ultisnips
 Plug 'SirVer/ultisnips'
-" airline
-Plug 'vim-airline/vim-airline'
+" lightline
+Plug 'itchyny/lightline.vim'
+" maximbaz/lightline-ale
+Plug 'maximbaz/lightline-ale'
+" vim-trailing-whitespace
+Plug 'bronson/vim-trailing-whitespace'
+" easymotion
+Plug 'easymotion/vim-easymotion'
 
 call plug#end()
 "-------------------------------
@@ -53,10 +62,9 @@ highlight PmenuSel ctermfg=2 ctermbg=3 guifg=#AFD700 guibg=#106900
 " set completeopt=longest,menu
 let g:ycm_goto_buffer_command = 'horizontal-split'
 let g:ycm_register_as_syntastic_checker = 0
-nnoremap gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap g/ :YcmCompleter GetDoc<CR>
-nnoremap gt :YcmCompleter GetType<CR>
-nnoremap gr :YcmCompleter GoToReferences<CR>
+nnoremap <leader>gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>g/ :YcmCompleter GetDoc<CR>
+nnoremap <leader>gr :YcmCompleter GoToReferences<CR>
 " 寻找全局配置文件
 let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
 let g:ycm_python_interpreter_path = "/usr/bin/python3"
@@ -64,7 +72,7 @@ let g:ycm_python_binary_path = "/usr/bin/python3"
 
 let g:ycm_collect_identifiers_from_tags_files =1
 " 在注释中也可以补全
-" autocmd FileType c,cpp,python 
+" autocmd FileType c,cpp,python
 let g:ycm_complete_in_comments = 0
 let g:ycm_complete_in_strings = 0
 let g:syntastic_enable_signs=1
@@ -75,7 +83,7 @@ let g:ycm_confirm_extra_conf = 0
 " 输入第一个字符就开始补全
 let g:ycm_min_num_of_chars_for_completion=1
 "语法关键字补全
-let g:ycm_seed_identifiers_with_syntax=1 
+let g:ycm_seed_identifiers_with_syntax=1
 " 每次重新生成匹配项，禁止缓存匹配项
 let g:ycm_cache_omnifunc=0
 let g:ycm_use_clangd = 1
@@ -95,7 +103,7 @@ let g:tagbar_sort      = 0       " 标签不排序，默认排序
 " ===
 " === ale config
 " ===
-let g:ale_lint_on_text_changed       = 'normal' " 代码更改后启动检查 
+let g:ale_lint_on_text_changed       = 'normal' " 代码更改后启动检查
 let g:ale_lint_on_insert_leave       = 1        " 退出插入模式即检查
 let g:ale_sign_column_always         = 1        " 总是显示动态检查结果
 let g:ale_sign_error                 = '>>'     " error 告警符号
@@ -103,7 +111,7 @@ let g:ale_sign_warning               = '--'     " warning 告警符号
 let g:ale_echo_msg_error_str         = 'E'      " 错误显示字符
 let g:ale_echo_msg_warning_str       = 'W'      " 警告显示字符
 let g:ale_echo_msg_format            = '[%linter%] %s [%severity%]' " 告警显示格式
- 
+
 " C 语言配置检查参数
 let g:ale_c_gcc_options              = '-Wall -Werror -O2 -std=c11'
 let g:ale_c_clang_options            = '-Wall -Werror -O2 -std=c11'
@@ -112,7 +120,7 @@ let g:ale_c_cppcheck_options         = ''
 let g:ale_cpp_gcc_options            = '-Wall -Werror -O2 -std=c++14'
 let g:ale_cpp_clang_options          = '-Wall -Werror -O2 -std=c++14'
 let g:ale_cpp_cppcheck_options       = ''
- 
+
 "使用clang对c和c++进行语法检查，对python使用pylint进行语法检查
 let g:ale_linters = {
 \   'c++': ['clang', 'gcc'],
@@ -133,7 +141,7 @@ nmap ad :ALEDetail<CR>
 " ===
 " 映射F2键开启nerdtree
 map <F2> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable = '▸' 
+let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 let NERDTreeHighlightCursorline = 1       " 高亮当前行
 let NERDTreeShowLineNumbers     = 1       " 显示行号
@@ -168,64 +176,72 @@ let g:NERDToggleCheckAllLines    = 1 " 检查选中的行操作是否成功
 " ===
 " === ultisnips config
 " ===
-" 插入模式下直接通过<C-v>键来触发UltiSnips的代码块补全 
+" 插入模式下直接通过<C-v>键来触发UltiSnips的代码块补全
 let g:UltiSnipsExpandTrigger="<C-v>"
 " <C-z>弹出UltiSnips的可用列表
 let g:UltiSnipsListSnippets="<C-z>"
-"<C-j>跳转的到下一个代码块可编辑区 
+"<C-j>跳转的到下一个代码块可编辑区
 let g:UltiSnipsJumpForwardTrigger="<C-j>"
-"<C-k>跳转到上一个代码块可编辑区 
+"<C-k>跳转到上一个代码块可编辑区
 let g:UltiSnipsJumpBackwardTrigger="<C-k>"
 
 " ===
-" === airline config
+" === lightline config
 " ===
-" 设置中文提示
-language messages zh_CN.utf-8 
-" 设置中文帮助
-set helplang=cn
-" 解决菜单乱码
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-" 设置为双字宽显示，否则无法完整显示如:☆
-set ambiwidth=double
-" 总是显示状态栏 
-let laststatus = 2
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+			\}
 
-let g:airline_powerline_fonts                   = 1 " 使用 powerline打过补丁的字体
-let g:airline_theme="dark"      " 设置主题
-" 开启tabline
-" 开启tabline
-let g:airline#extensions#tabline#enabled = 1
-" tabline中当前buffer两端的分隔字符
-let g:airline#extensions#tabline#left_sep = ' '
-" tabline中未激活buffer两端的分隔字符
-let g:airline#extensions#tabline#left_alt_sep = ' '
-" tabline中buffer显示编号
-let g:airline#extensions#tabline#buffer_nr_show = 1
+" ===
+" === lightline-ale config
+" ===
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \     'linter_checking': 'left',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'left',
+      \ }
+let g:lightline.active = {
+			\'right':[
+			\[ 'lineinfo' ],
+			\[ 'percent' ],
+			\[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok']],
+			\'left': [
+			\[ 'mode', 'paste' ],
+			\[ 'gitbranch', 'readonly', 'filename', 'modified' ]]
+			\}
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_warnings = "\uf071"
+" let g:lightline#ale#indicator_errors = "\uf05e"
+" let g:lightline#ale#indicator_ok = "\uf00c"
 
-" 状态栏显示图标设置
-if !exists('g:airline_symbols')
-	    let g:airline_symbols = {}
-endif
+" ===
+" === vim-trailing-whitespace config
+" ===
+" 使用<leader><space>一键去除行尾空格
+map <leader><space> :FixWhitespace<cr>
 
-" 切换 buffer
-nnoremap [b :bp<CR>
-nnoremap ]b :bn<CR>
- 
-" 关闭当前 buffer
-noremap <C-x> :w<CR>:bd<CR>
-" <leader>1~9 切到 buffer1~9
-map <leader>1 :b 1<CR>
-map <leader>2 :b 2<CR>
-map <leader>3 :b 3<CR>
-map <leader>4 :b 4<CR>
-map <leader>5 :b 5<CR>
-map <leader>6 :b 6<CR>
-map <leader>7 :b 7<CR>
-map <leader>8 :b 8<CR>
-map <leader>9 :b 9<CR>
+" ===
+" easymotion config
+" ===
+let g:EasyMotion_smartcase = 1
+"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+map <Leader><leader>h <Plug>(easymotion-linebackward)
+map <Leader><Leader>j <Plug>(easymotion-j)
+map <Leader><Leader>k <Plug>(easymotion-k)
+map <Leader><leader>l <Plug>(easymotion-lineforward)
+" 重复上一次操作
+map <Leader><leader>. <Plug>(easymotion-repeat)
 
+" ===
+" VIM locoal config
+" ===
 "-------------------------------
 " 选择配色方案
 colo pablo
@@ -245,7 +261,7 @@ set incsearch
 noremap = nzz
 noremap - Nzz
 
-" Use <space><CR> to cancle hlsearch 
+" Use <space><CR> to cancle hlsearch
 noremap <space><CR> :nohlsearch<CR>
 
 " 可以在有buffer的地方使用鼠标
@@ -290,6 +306,24 @@ map <space>h <C-w>h
 map <space>j <C-w>j
 map <space>k <C-w>k
 
+" 空格+数字切换vim tab快捷键设置
+nmap <space>1 1gt
+nmap <space>2 2gt
+nmap <space>3 3gt
+nmap <space>4 4gt
+nmap <space>5 5gt
+nmap <space>6 6gt
+nmap <space>7 7gt
+nmap <space>8 8gt
+nmap <space>9 9gt
+nmap <space>0 :tablast<CR>
+" 空格-n 切换到下一个tab
+nmap <space>n :tabn<CR>
+" 空格-p 切换到上一个tab
+nmap <space>p :tabp<CR>
+" ctrl-x 关闭当前tab
+nmap <C-x> :tabc<CR>
+
 " 显示输入的命令
 set showcmd
 
@@ -301,8 +335,8 @@ set showmatch
 set showmode
 
 " 状态行显示的内容（包括文件类型和解码）
-set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
-set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]
+" set statusline=[%F]%m%r%h%w\ [FORMAT:%{&ff}]\ [TYPE:%Y]\ [POS=%l/%L,Column:%c][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
+" set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]
 
 " 总是显示状态行
 set laststatus=2
@@ -324,7 +358,9 @@ set viminfo+=!
 set smartindent
 
 " 开启terminal Color 256色
-set t_Co=256
+if !has('gui_running')
+  set t_Co=256
+endif
 
 " 指定在选择文本时，光标所在位置也属于被选中的范围
 set selection=inclusive
@@ -365,14 +401,14 @@ map snp :set nopaste<CR>
 
 " Move current line quickly
 " Use '2[m' to move curret line up 2 offset
-nnoremap [m  :<c-u>execute 'move -1-'. v:count1<cr> 
+nnoremap [m  :<c-u>execute 'move -1-'. v:count1<cr>
 " Use '2]m' to move curret line down 2 offset
 nnoremap ]m  :<c-u>execute 'move +'. v:count1<cr>
 
 " Insert blank line quickly
-" use 2[<space> to insert 2 blank line before current line 
+" use 2[<space> to insert 2 blank line before current line
 nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
-" use 2]<space> to insert 2 blank line behind crrent line  
+" use 2]<space> to insert 2 blank line behind crrent line
 nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 
 "在打开多文件下，退出当前文件，光标保持在上次编辑的位置
@@ -381,34 +417,34 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " ===
 " === Set new file title config
 " ===
-"新建.c,.h,.sh,.java文件，自动插入文件头 
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()" 
-""定义函数SetTitle，自动插入文件头 
-func! SetTitle() 
-	"如果文件类型为.sh文件 
-	if &filetype == 'sh' 
-		call setline(1, "##########################################################################") 
-		call append(line("."), "# File Name: ".expand("%")) 
-		call append(line(".")+1, "# Author: Jonewan") 
-		call append(line(".")+2, "# mail: jonewan@yeah.net") 
-		call append(line(".")+3, "# Created Time: ".strftime("%c")) 
-		call append(line(".")+4, "#########################################################################") 
+"新建.c,.h,.sh,.java文件，自动插入文件头
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()"
+"定义函数SetTitle，自动插入文件头
+func! SetTitle()
+	"如果文件类型为.sh文件
+	if &filetype == 'sh'
+		call setline(1, "#######################")
+		call append(line("."), "# File Name: ".expand("%"))
+		call append(line(".")+1, "# Author: Jonewan")
+		call append(line(".")+2, "# mail: jonewan@yeah.net")
+		call append(line(".")+3, "# Created Time: ".strftime("%c"))
+		call append(line(".")+4, "#######################")
 		call append(line(".")+5, "#!/bin/bash")
 		call append(line(".")+6, "")
-	else 
-		call setline(1, "/*************************************************************************") 
-		call append(line("."), "	> File Name: ".expand("%")) 
-		call append(line(".")+1, "	> Author: Jonewan") 
-		call append(line(".")+2, "	> Mail: jonewan@yeah.net ") 
-		call append(line(".")+3, "	> Created Time: ".strftime("%c")) 
-		call append(line(".")+4, " ************************************************************************/") 
+	else
+		call setline(1, "/***********************************")
+		call append(line("."), "	> File Name: ".expand("%"))
+		call append(line(".")+1, "	> Author: Jonewan")
+		call append(line(".")+2, "	> Mail: jonewan@yeah.net ")
+		call append(line(".")+3, "	> Created Time: ".strftime("%c"))
+		call append(line(".")+4, " ***********************************/")
 		call append(line(".")+5, "")
 	endif
 	"新建文件后，自动定位到文件末尾
 	autocmd BufNewFile * normal G
-endfunc 
+endfunc
 
 " Reload the vimrc automaticly
-autocmd BufWritePost $MYVIMRC source $MYVIMRC 
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
 " Check the syntax style automaticly
 "autocmd BufWritePost ~/.Xdefaults call system('xrdb ~/.Xdefaults'
