@@ -22,6 +22,8 @@ Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
 " tagbar
 " 需安装ctags `sudo apt install ctags`
 Plug 'majutsushi/tagbar'
+" taglist
+Plug 'vim-scripts/taglist.vim'
 " Error checking
 Plug 'dense-analysis/ale'
 " File tree
@@ -44,6 +46,13 @@ Plug 'maximbaz/lightline-ale'
 Plug 'bronson/vim-trailing-whitespace'
 " easymotion
 Plug 'easymotion/vim-easymotion'
+" jeaye/color_coded
+" cd ~/.vim/bundle/color_coded
+" rm -f CMakeCache.txt
+" mkdir build && cd build
+" cmake ..
+" make && make install
+" Plug 'jeaye/color_coded'
 
 call plug#end()
 "-------------------------------
